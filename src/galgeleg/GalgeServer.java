@@ -1,18 +1,22 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package galgeleg;
 
-import java.net.MalformedURLException;
 import java.rmi.Naming;
-import java.rmi.RemoteException;
+import javax.xml.ws.Endpoint;
 
-public class GalgeServer 
-{
-    public static void main(String[] args) throws RemoteException, MalformedURLException 
-    {
-        java.rmi.registry.LocateRegistry.createRegistry(1099);
-        
-        GalgeInterface g = new Galgelogik();
-        Naming.rebind("rmi://localhost/GalgeServer", g);
-        System.out.println("Galgeserver opstartet");
-        
-    }
+/**
+ *
+ * @author aleks
+ */
+public class GalgeServer {
+    public static void main(String[] arg) throws Exception
+	{
+		GalgelogikImpl g = new GalgelogikImpl();
+		Endpoint.publish("http://[::]:9950/Galgelogik", g);
+		System.out.println("Galgelogik registreret.");
+	}
 }
