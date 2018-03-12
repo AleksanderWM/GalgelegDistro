@@ -27,7 +27,7 @@ public class GalgelogikImpl implements GalgelogikI {
   private String ordet;
   private ArrayList<String> brugteBogstaver = new ArrayList<String>();
   private String synligtOrd;
-  private int antalForkerteBogstaver;
+  private int antalForkerteBogstaver, points;
   private boolean sidsteBogstavVarKorrekt;
   private boolean spilletErVundet;
   private boolean spilletErTabt;
@@ -78,10 +78,15 @@ public class GalgelogikImpl implements GalgelogikI {
   public boolean erSpilletSlut() {
     return spilletErTabt || spilletErVundet;
   }
+  public int getPoints(){
+      return points;
+  }
 
   public void nulstil() {
     brugteBogstaver.clear();
     antalForkerteBogstaver = 0;
+    //Nulstiller points i terminal version.
+    points = 0;
     spilletErVundet = false;
     spilletErTabt = false;
     ordet = muligeOrd.get(new Random().nextInt(muligeOrd.size()));
@@ -114,6 +119,7 @@ public class GalgelogikImpl implements GalgelogikI {
     if (ordet.contains(bogstav)) {
       sidsteBogstavVarKorrekt = true;
       System.out.println("Bogstavet var korrekt: " + bogstav);
+      points++;
     } else {
       // Vi gættede på et bogstav der ikke var i ordet.
       sidsteBogstavVarKorrekt = false;

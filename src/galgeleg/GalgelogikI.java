@@ -33,6 +33,8 @@ public interface GalgelogikI extends java.rmi.Remote {
   @WebMethod void opdaterSynligtOrd();
 
   @WebMethod void gætBogstav(String bogstav);
+  
+  @WebMethod int getPoints();
 
   @WebMethod void logStatus();
   @WebMethod Boolean login(String name, String pass) throws java.rmi.RemoteException;

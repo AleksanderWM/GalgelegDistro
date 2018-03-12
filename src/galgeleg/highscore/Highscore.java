@@ -6,6 +6,8 @@ package galgeleg.highscore;
 */
 import java.util.*;
 import galgeleg.highscore.PlayerAndScore;
+import galgeleg.GalgelogikImpl;
+import Brugerautorisation.data.Bruger;
 
 
 
@@ -14,17 +16,20 @@ import galgeleg.highscore.PlayerAndScore;
  * @author janus
  */
 public class Highscore {
-   private ArrayList<PlayerAndScore> highscoreList = new ArrayList<PlayerAndScore>();
+    private ArrayList<PlayerAndScore> highscoreList = new ArrayList<PlayerAndScore>();
+    private GalgelogikImpl logic = new GalgelogikImpl();
+    private Bruger user = new Bruger();
     
     
     
 //    public void addHighscore(int score, String studienummer){
-   public void addHighScore(){
+    public void addHighScore(){
         Collections.sort(highscoreList, PlayerAndScore.playerScore);
+        
         for(int i = 1; i < highscoreList.size(); i++ ){
-            if (score > highscoreList.get(i));
-            highscoreList.add(i, score);
-            score = 0;
+            if ((logic.getPoints()) > highscoreList.get(i).getHighscore());
+            PlayerAndScore playerAndScore = new PlayerAndScore(logic.getPoints(), user.brugernavn);
+            highscoreList.add(playerAndScore);
             constrainArray();
         }
         
@@ -36,17 +41,10 @@ public class Highscore {
         highscoreList.subList(51, highscoreList.size()).clear();
         
     }
-    public int[] getHighscoreList(){
-        int[] topTen = new int[9];
-        for (int i = 0; i < 10; i++){
-            topTen[i] = highscoreList.get(1+i);
-        }
-        return topTen;
+    public List<PlayerAndScore> getHighscoreList(){
         
+        return highscoreList.subList(1, 11);
     }
     
-    
-       
-
     
 }
