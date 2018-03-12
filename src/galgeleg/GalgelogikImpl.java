@@ -1,16 +1,22 @@
 package galgeleg;
 
+import Brugerautorisation.Rmi.Brugeradmin;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.Naming;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Random;
 import javax.jws.WebService;
+import javax.xml.namespace.QName;
+import javax.xml.ws.Service;
 
 @WebService(endpointInterface = "galgeleg.GalgelogikI")
 public class GalgelogikImpl implements GalgelogikI {
@@ -129,6 +135,27 @@ public class GalgelogikImpl implements GalgelogikI {
     if (spilletErTabt) System.out.println("- SPILLET ER TABT");
     if (spilletErVundet) System.out.println("- SPILLET ER VUNDET");
     System.out.println("---------- ");
+  }
+  
+  public Boolean login(String username, String password) throws RemoteException{
+      Brugeradmin ba;
+      try {
+          URL url = new URL("http://javabog.dk:9901/brugeradmin?wsdl");
+			QName qname = new QName("http://soap.transport.brugerautorisation/", "BrugeradminImplService");
+			Service service = Service.create(url, qname);
+			ba = service.getPort(Brugeradmin.class);
+		} catch (MalformedURLException e1) {
+			e1.printStackTrace();
+			return false;
+		}
+		try{
+			ba.hentBruger(username, password);
+			return true;
+			
+		} catch(IllegalArgumentException e){
+			e.printStackTrace();
+		}
+		return false;
   }
 
 }

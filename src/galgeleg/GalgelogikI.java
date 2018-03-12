@@ -13,7 +13,7 @@ import java.util.ArrayList;
  *
  * @author aleks
  */
-public interface GalgelogikI {
+public interface GalgelogikI extends java.rmi.Remote {
   @WebMethod ArrayList<String> getBrugteBogstaver();
   @WebMethod String getSynligtOrd();
   @WebMethod String getOrdet();
@@ -35,6 +35,7 @@ public interface GalgelogikI {
   @WebMethod void gætBogstav(String bogstav);
 
   @WebMethod void logStatus();
+  @WebMethod Boolean login(String name, String pass) throws java.rmi.RemoteException;
 
     
 }
