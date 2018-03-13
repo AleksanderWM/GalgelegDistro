@@ -14,6 +14,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 
@@ -28,14 +30,15 @@ public class Highscore {
     
 
 //    public void addHighscore(int score, String studienummer){
-    public void addHighScore() throws IOException, FileNotFoundException, ClassNotFoundException{
-        loadList();
-        Collections.sort(highscoreList, PlayerAndScore.playerScore);
+    public void addHighScore() throws FileNotFoundException, ClassNotFoundException{
+        if (highscoreList.isEmpty() == true)
+            loadList();
         
         for(int i = 1; i < highscoreList.size(); i++ ){
             if ((logic.getPoints()) > highscoreList.get(i).getHighscore());
             PlayerAndScore playerAndScore = new PlayerAndScore(logic.getPoints(), user.brugernavn);
             highscoreList.add(playerAndScore);
+            Collections.sort(highscoreList, PlayerAndScore.playerScore);
             constrainArray();
         }
         saveList();
@@ -55,19 +58,41 @@ public class Highscore {
     }
     
     //Used to save the highscore ArrayList to a serialized object. 
-     void saveList() throws FileNotFoundException, IOException{
-        FileOutputStream fOutput = new FileOutputStream("file.temp");
-        ObjectOutputStream oOutput = new ObjectOutputStream(fOutput);
-        oOutput.writeObject(highscoreList);
-        oOutput.close();
+     void saveList() throws FileNotFoundException{
+         ObjectOutputStream oOutput = null;
+        try {
+            FileOutputStream fOutput = new FileOutputStream("file.temp");
+            oOutput = new ObjectOutputStream(fOutput);
+            oOutput.writeObject(highscoreList);
+            oOutput.close();
+        } catch (IOException ex) {
+            Logger.getLogger(Highscore.class.getName()).log(Level.SEVERE, "Unable to save file", ex);
+        } finally {
+            try {
+                oOutput.close();
+            } catch (IOException ex) {
+                Logger.getLogger(Highscore.class.getName()).log(Level.SEVERE, "Unable to close object output stream", ex);
+            }
+        }
     }
     
      //Used to load the highScore ArrayList from a serialized file. 
-     void loadList() throws FileNotFoundException, IOException, ClassNotFoundException{
-        FileInputStream fInput = new FileInputStream("file.temp");
-        ObjectInputStream oInput = new ObjectInputStream(fInput);
-        this.highscoreList = (ArrayList<PlayerAndScore>)oInput.readObject();
-        oInput.close();
+     void loadList() throws FileNotFoundException, ClassNotFoundException{
+         ObjectInputStream oInput = null;
+        try {
+            FileInputStream fInput = new FileInputStream("file.temp");
+            oInput = new ObjectInputStream(fInput);
+            this.highscoreList = (ArrayList<PlayerAndScore>)oInput.readObject();
+            oInput.close();
+        } catch (IOException ex) {
+            Logger.getLogger(Highscore.class.getName()).log(Level.SEVERE, "Unable to load file", ex);
+        } finally {
+            try {
+                oInput.close();
+            } catch (IOException ex) {
+                Logger.getLogger(Highscore.class.getName()).log(Level.SEVERE, "Unable to close object input stream", ex);
+            }
+        }
     }
 }
  
