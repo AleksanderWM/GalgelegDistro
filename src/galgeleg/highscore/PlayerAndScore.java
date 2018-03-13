@@ -5,13 +5,14 @@
 */
 package galgeleg.highscore;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 /**
  *
  * @author janus
  */
-public class PlayerAndScore{
+public class PlayerAndScore implements Serializable{
     private int highscore;
     private String studentNumber;
     
