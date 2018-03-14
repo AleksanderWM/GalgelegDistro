@@ -1,7 +1,7 @@
-package Brugerautorisation.Rmi;
+package brugerautorisation.transport.rmi;
 
-import Brugerautorisation.data.Diverse;
-import Brugerautorisation.data.Bruger;
+import brugerautorisation.data.Diverse;
+import brugerautorisation.data.Bruger;
 import java.rmi.Naming;
 
 public class Brugeradminklient {

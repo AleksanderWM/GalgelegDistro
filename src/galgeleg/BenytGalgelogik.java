@@ -11,7 +11,7 @@ import javax.xml.ws.Service;
 public class BenytGalgelogik {
 
   public static void main(String[] args) throws MalformedURLException, RemoteException{
-    URL url = new URL("http://ubuntu4.saluton.dk:9950/Galgelogik?wsdl");
+    URL url = new URL("http://ubuntu4.saluton.dk:9952/Galgelogik?wsdl");
 		QName qname = new QName("http://galgeleg/", "GalgelogikImplService");
 		Service service = Service.create(url, qname);
 		GalgelogikI spil = service.getPort(GalgelogikI.class);
@@ -28,9 +28,10 @@ public class BenytGalgelogik {
         password = scanner.nextLine();
         spil.login(username, password);
     }
-    spil.nulstil();
+
     
     while(!spil.erSpilletSlut()){
+        System.out.println("Gæt på et bogstav, og tryk derefter enter");
         String bogstav = scanner.nextLine();
         spil.gætBogstav(bogstav);
         System.out.println(spil.getSynligtOrd());

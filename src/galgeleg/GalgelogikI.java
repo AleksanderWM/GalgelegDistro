@@ -18,9 +18,7 @@ public interface GalgelogikI extends java.rmi.Remote {
   @WebMethod String getSynligtOrd();
   @WebMethod String getOrdet();
           
-  @WebMethod int getAntalForkerteBogstaver();
 
-  @WebMethod boolean erSidsteBogstavKorrekt();
 
   @WebMethod boolean erSpilletVundet();
 
@@ -38,6 +36,7 @@ public interface GalgelogikI extends java.rmi.Remote {
 
   @WebMethod void logStatus();
   @WebMethod Boolean login(String name, String pass) throws java.rmi.RemoteException;
+  
 
     
 }

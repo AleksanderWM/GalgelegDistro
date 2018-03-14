@@ -1,7 +1,7 @@
-package Brugerautorisation.Rmi;
-import Brugerautorisation.data.Bruger;
-import Brugerautorisation.server.Brugerdatabase;
-import Brugerautorisation.server.SendMail;
+package brugerautorisation.transport.rmi;
+import brugerautorisation.data.Bruger;
+import brugerautorisation.server.Brugerdatabase;
+import brugerautorisation.server.SendMail;
 import java.rmi.server.UnicastRemoteObject;
 import javax.mail.MessagingException;
 

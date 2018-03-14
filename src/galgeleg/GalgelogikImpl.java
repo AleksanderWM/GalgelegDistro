@@ -1,6 +1,6 @@
 package galgeleg;
 
-import Brugerautorisation.Rmi.Brugeradmin;
+import brugerautorisation.transport.rmi.Brugeradmin;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -24,127 +24,87 @@ import javax.xml.ws.Service;
 public class GalgelogikImpl implements GalgelogikI {
     
     
-    /** AHT afprøvning er muligeOrd synlig på pakkeniveau */
-    ArrayList<String> muligeOrd = new ArrayList<String>();
-    private String ordet;
-    private ArrayList<String> brugteBogstaver = new ArrayList<String>();
-    private String synligtOrd;
-    private int antalForkerteBogstaver, points;
-    private boolean sidsteBogstavVarKorrekt;
-    private boolean spilletErVundet;
-    private boolean spilletErTabt;
+
+    private galgeObject galObj;
     
     public GalgelogikImpl() {
-        muligeOrd.add("bil");
-        muligeOrd.add("computer");
-        muligeOrd.add("programmering");
-        muligeOrd.add("motorvej");
-        muligeOrd.add("busrute");
-        muligeOrd.add("gangsti");
-        muligeOrd.add("skovsnegl");
-        muligeOrd.add("solsort");
-        muligeOrd.add("seksten");
-        muligeOrd.add("sytten");
+        
+        galObj = new galgeObject();
         nulstil();
     }
     
-    
-    public ArrayList<String> getBrugteBogstaver() {
-        return brugteBogstaver;
-    }
-    
-    public String getSynligtOrd() {
-        return synligtOrd;
-    }
-    
-    public String getOrdet() {
-        return ordet;
-    }
-    
-    public int getAntalForkerteBogstaver() {
-        return antalForkerteBogstaver;
-    }
-    
-    public boolean erSidsteBogstavKorrekt() {
-        return sidsteBogstavVarKorrekt;
-    }
-    
-    public boolean erSpilletVundet() {
-        return spilletErVundet;
-    }
-    
-    public boolean erSpilletTabt() {
-        return spilletErTabt;
-    }
-    
-    public boolean erSpilletSlut() {
-        return spilletErTabt || spilletErVundet;
-    }
+
+    @Override
     public int getPoints(){
-        return points;
+        return galObj.getPoints();
     }
     public void clearPoints(){
-        this.points = 0;
+        galObj.clearPoints();
     }
     
+    @Override
     public void nulstil() {
-        brugteBogstaver.clear();
-        antalForkerteBogstaver = 0;
+        getWordsFromDR();
+        galObj.getBrugteBogstaver().clear();
+        galObj.setAntalForkerteBogstaver(0);
         //Nulstiller points i terminal version.
-        points = 0;
-        spilletErVundet = false;
-        spilletErTabt = false;
-        ordet = muligeOrd.get(new Random().nextInt(muligeOrd.size()));
+        galObj.setPoints(0);
+        galObj.setErSpilletVundet(false);
+        galObj.setErSpilletTabt(false);
+        galObj.setOrdet(galObj.getMuligeOrd().get(new Random().nextInt(galObj.getMuligeOrd().size())));
         opdaterSynligtOrd();
     }
     
     
-    public void opdaterSynligtOrd() {
-        synligtOrd = "";
-        spilletErVundet = true;
-        for (int n = 0; n < ordet.length(); n++) {
-            String bogstav = ordet.substring(n, n + 1);
-            if (brugteBogstaver.contains(bogstav)) {
-                synligtOrd = synligtOrd + bogstav;
+    @Override
+    public void opdaterSynligtOrd() { 
+        galObj.clearSynligtOrd();
+        galObj.setErSpilletVundet(true);
+        for (int n = 0; n < getOrdet().length(); n++) {
+            String bogstav = getOrdet().substring(n, n + 1);
+            if (galObj.getBrugteBogstaver().contains(bogstav)) {
+                galObj.setSynligtOrd(bogstav);
             } else {
-                synligtOrd = synligtOrd + "*";
-                spilletErVundet = false;
+                galObj.setSynligtOrd("*");
+                galObj.setErSpilletVundet(false);
             }
         }
     }
     
+    @Override
     public void gætBogstav(String bogstav) {
         if (bogstav.length() != 1) return;
         System.out.println("Der gættes på bogstavet: " + bogstav);
-        if (brugteBogstaver.contains(bogstav)) return;
-        if (spilletErVundet || spilletErTabt) return;
+        if (getOrdet().contains(bogstav)) return;
+        if (erSpilletVundet() || erSpilletTabt()) return;
         
-        brugteBogstaver.add(bogstav);
+        galObj.setBrugteBogstaver(bogstav);
         
-        if (ordet.contains(bogstav)) {
-            sidsteBogstavVarKorrekt = true;
+        if (getOrdet().contains(bogstav)) {
+            galObj.setErSidsteBogstavKorrekt(true);
             System.out.println("Bogstavet var korrekt: " + bogstav);
-            points++;
+            galObj.setPoints(1);
         } else {
             // Vi gættede på et bogstav der ikke var i ordet.
-            sidsteBogstavVarKorrekt = false;
+            galObj.setErSidsteBogstavKorrekt(false);
             System.out.println("Bogstavet var IKKE korrekt: " + bogstav);
-            antalForkerteBogstaver = antalForkerteBogstaver + 1;
-            if (antalForkerteBogstaver > 6) {
-                spilletErTabt = true;
+            galObj.setAntalForkerteBogstaver(1);
+            if (galObj.getAntalForkerteBogstaver() > 6) {
+                galObj.setErSpilletTabt(true);
             }
         }
         opdaterSynligtOrd();
     }
     
+    @Override
     public void logStatus() {
         System.out.println("---------- ");
-        System.out.println("- ordet (skult) = " + ordet);
-        System.out.println("- synligtOrd = " + synligtOrd);
-        System.out.println("- forkerteBogstaver = " + antalForkerteBogstaver);
-        System.out.println("- brugeBogstaver = " + brugteBogstaver);
-        if (spilletErTabt) System.out.println("- SPILLET ER TABT");
-        if (spilletErVundet) System.out.println("- SPILLET ER VUNDET");
+        System.out.println("- ordet (skult) = " + galObj.getOrdet());
+        System.out.println("- synligtOrd = " + galObj.getSynligtOrd());
+        System.out.println("- forkerteBogstaver = " + galObj.getAntalForkerteBogstaver());
+        System.out.println("- brugeBogstaver = " + galObj.getBrugteBogstaver());
+        if (galObj.getErSpilletTabt()) System.out.println("- SPILLET ER TABT");
+        if (galObj.getErSpilletVundet()) System.out.println("- SPILLET ER VUNDET");
         System.out.println("---------- ");
     }
     
@@ -166,6 +126,45 @@ public class GalgelogikImpl implements GalgelogikI {
         return "Error";
     }
     
+    @Override
+    public ArrayList<String> getBrugteBogstaver() {
+        return galObj.getBrugteBogstaver();
+    }
+    
+    @Override
+    public String getSynligtOrd() {
+        return galObj.getSynligtOrd();
+    }
+    
+    @Override
+    public String getOrdet() {
+        return galObj.getOrdet();
+        
+    }
+    
+    public int getAntalForkerteBogstaver() {
+        return galObj.getAntalForkerteBogstaver();
+    }
+    
+    public boolean erSidsteBogstavKorrekt() {
+        return galObj.getErSidsteBogstavKorrekt();
+    }
+    
+    @Override
+    public boolean erSpilletVundet() {
+        return galObj.getErSpilletVundet();
+    }
+    
+    @Override
+    public boolean erSpilletTabt() {
+        return galObj.getErSpilletTabt();
+    }
+
+    @Override
+    public boolean erSpilletSlut() {
+        return galObj.getErSpilletTabt() || galObj.getErSpilletVundet();
+    }
+    
     public void getWordsFromDR() {
         String data = hentUrl("https://dr.dk");
         data = data.substring(data.indexOf("<body")). // fjern headere
@@ -181,37 +180,37 @@ public class GalgelogikImpl implements GalgelogikI {
                 replaceAll(" [a-zæøå][a-zæøå] "," "); // fjern 2-bogstavsord
         System.out.println("data = " + data);
         System.out.println("data = " + Arrays.asList(data.split("\\s+")));
-        muligeOrd.clear();
-        muligeOrd.addAll(new HashSet<String>(Arrays.asList(data.split(" "))));
+        galObj.getMuligeOrd().clear();
+        HashSet<String> set = new HashSet<String>(Arrays.asList(data.split(" ")));
+        galObj.getMuligeOrd().addAll(set);
         //Fjernet element på index 0 da dette er " ".
-        muligeOrd.remove(0);
-        //Clear pointcounter:
-        clearPoints();
-        System.out.println("muligeOrd = " + muligeOrd);
-        nulstil();
+        galObj.getMuligeOrd().remove(0);
+        System.out.println("muligeOrd = " + galObj.getMuligeOrd());
+        
     }
     
     
+    @Override
     public Boolean login(String username, String password) throws RemoteException{
         Brugeradmin ba;
         try {
-            URL url = new URL("http://javabog.dk:9901/brugeradmin?wsdl");
-            QName qname = new QName("http://soap.transport.brugerautorisation/", "BrugeradminImplService");
-            Service service = Service.create(url, qname);
-            ba = service.getPort(Brugeradmin.class);
-        } catch (MalformedURLException e1) {
-            e1.printStackTrace();
-            return false;
-        }
-        try{
+            ba = (Brugeradmin) Naming.lookup("rmi://javabog.dk/brugeradmin");
             ba.hentBruger(username, password);
             return true;
-            
-        } catch(IllegalArgumentException e){
-            e.printStackTrace();
+        } catch (NotBoundException ex) {
+            Logger.getLogger(GalgelogikImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(GalgelogikImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return false;
+		return false;
+	}
+
+    
+
+
+
     }
+
+   
     
-    
-}
+

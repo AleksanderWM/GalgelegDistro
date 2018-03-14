@@ -7,7 +7,7 @@ package galgeleg.highscore;
 import java.util.*;
 import galgeleg.highscore.PlayerAndScore;
 import galgeleg.GalgelogikImpl;
-import Brugerautorisation.data.Bruger;
+import brugerautorisation.data.Bruger;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;

@@ -1,5 +1,5 @@
-package Brugerautorisation.Rmi;
-import Brugerautorisation.server.Brugerdatabase;
+package brugerautorisation.transport.rmi;
+import brugerautorisation.server.Brugerdatabase;
 import java.io.IOException;
 import java.rmi.Naming;
 public class Brugeradminserver
